@@ -1,0 +1,520 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Vectorworks</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no,minimum-scale=1.0, maximum-scale=1.0">
+<meta property="uploadTime" data-uploadTime="Fri Apr 10 03:36:35 2020
+"\>
+    <!-- build:css --><link rel="stylesheet" type="text/css" href="https://s3.amazonaws.com/vectorworks-cloud-static/vgx-viewer/vendor.min.css"><link rel="stylesheet" type="text/css" href="https://s3.amazonaws.com/vectorworks-cloud-static/vgx-viewer/styles.min.css"><!-- endbuild:css -->
+</head>
+
+<body>
+    <div id="startupTutorial" style="position:absolute; top: 50%; left: 50%; width: 150px; height: 125px;  background-color:rgba(145,145,145,0.9); padding: 1em;  border:1px solid; border-color: #ffffff; display:none";>
+            <div id="closePrmpt" onclick="CloseTutorial()" style="cursor: pointer; cursor: hand; position:absolute; top: 0%; right: 0%;  display: none">&#10060;</div>
+            <div id="startupTutorialPrmpt" style="position:relative; font-size:100%; font-family:DINCondensed-Bold"></div>
+    </div>
+    <div id="contextualTutorial" style="position:absolute; top: 25%; left: 25%; width: 150px; height: 125px; background-color:rgba(145,145,145,0.9); padding: 1em;  border:1px solid; border-color: #ffffff; display:none";>
+            <div id="contextualTutorialPrmpt" style="position:relative; font-size:100%; font-family:DINCondensed-Bold"></div>
+    </div>
+
+    <div style="position: absolute;width: 116px;height: 56px;bottom:0px;right:0px;border-style:none;background:none;">
+        <ul>
+            <button id="camcontrol" title="Select Camera Controller" style="background:transparent url('https://s3.amazonaws.com/vectorworks-cloud-static/vgx-viewer/ControllerIcon.png');position: absolute;width: 56px;height: 56px;bottom:4px;right:62px;background-size: 100%;border-style:none;z-index: 2;" onmousedown="fpcMouseDown()" ontouchstart="fpcMouseDown()"></button>
+        </ul>
+        <ul>
+            <button id="view360menubutton" title="Stereoscopic Mode" style="background:transparent url('https://s3.amazonaws.com/vectorworks-cloud-static/vgx-viewer/360.png');position: absolute;width: 56px;height: 56px;bottom:4px;right:4px;background-size: 100%;border-style:none;z-index: 2;" onmousedown="displayStereoScopic();" ontouchstart="displayStereoScopic();"></button>
+        </ul>
+        <ul>
+            <button id="vrbutton" title="Cardboard Mode" style="background:transparent url('https://s3.amazonaws.com/vectorworks-cloud-static/vgx-viewer/cardboard.png');position: absolute;width: 56px;height: 56px;bottom:4px;right:4px;background-size: 100%;border-style:none; display:none;z-index: 2;"></button>
+        </ul>
+        <ul><img id="controlIndi" src="https://s3.amazonaws.com/vectorworks-cloud-static/vgx-viewer/OrbitController.png" style="position: absolute;width: 18px;height: 18px;bottom:4px;right:100px;background-size: 100%;border-style:none;z-index: 2;" onmousedown="fpcMouseDown()" ontouchstart="fpcMouseDown()">
+        </ul>
+    </div>
+    <div style="position: absolute;width: 56px;height: 56px;bottom:0px;left:0px;border-style:none;background:none;">
+        <ul>
+            <button id="helpbtn" title="Help" style="background:transparent url('https://s3.amazonaws.com/vectorworks-cloud-static/vgx-viewer/help.png');position: absolute;width: 56px;height: 56px;bottom:4px;left:4px;background-size: 100%;border-style:none;z-index: 2;" onmousedown="displayHelp()" ontouchstart="displayHelp()"></button>
+        </ul>
+        <ul id="joystickButton" style="display:none;z-index: 2;">
+            <div data-type="static" class="button_static"></div>
+        </ul>
+    </div>
+    <div id="flyMenu" class="bubbletop" style="top:64px;right:71px;background-size: 100%;display:none; border:none; text-align: center;">
+        <div class="panel-group" id="accordion" style="margin-bottom:1px;margin-top:1px">
+            <div class="panel panel-default" style="background-size: 100%;background-color:rgba(145,145,145,0.9);border-radius:10px; border:none;border-bottom-style: solid;font-family:DINCondensed-Bold, Arial;">
+                <div class="panel-heading" style="background-size: 100%;background-color:rgba(145,145,145,0.9);border-radius:10px;">
+                    <h4 class="panel-title"><a id="fpsetting" data-toggle="collapse" data-parent="#accordion" href="#collapse2" style="font-family:DINCondensed-Bold, Arial"></a></h4>
+                </div>
+                <div id="collapse2" class="panel-collapse collapse in">
+                    <div class="panel-body">
+                        <label id="collisionLabel"></label><input type="checkbox" id="collisionbox"><br><br>
+                        <label id="walkLabel"></label><br>
+                        <input type="range" id="walkSlide" min="0" max="10" step="1" value="5" data-orientation="vertical"><br>
+                        <label id="senseLabel"></label><br>
+                        <input type="range" id="senseSlide" min="0 " max="100" step="5" value="50" data-orientation="vertical"><br>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default" style="background-size: 100%;background-color:rgba(145,145,145,0.9);border-radius:10px; border:none;border-bottom-style: solid;font-family:DINCondensed-Bold, Arial;">
+                <div class="panel-heading" style="background-size: 100%;background-color:rgba(145,145,145,0.9);border-radius:10px;">
+                    <h4 class="panel-title"><a id="aboutSetting" data-toggle="collapse" data-parent="#accordion" onclick="displayAbout()" style="cursor:pointer;">About</a></h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="position: absolute;width: 112px;height: 114px;top:4px;right:4px;border-style:none;background:none;">
+        <ul>
+            <button id="resetButtonImg" class="dvviews" title="Reset Mode" style="border-style:none;background:transparent url('https://s3.amazonaws.com/vectorworks-cloud-static/vgx-viewer/home.png');position: absolute;width: 56px;height: 56px;top:0px;right:0px;background-size: 100%;z-index: 2;" onmousedown="resetView();" ontouchstart="resetView();"></button>
+            <button id="DefViewType" class="dvviews" title="Select View" type="button" style="border-style:none;background:transparent url('https://s3.amazonaws.com/vectorworks-cloud-static/vgx-viewer/settings.png');width: 56px;height: 56px;top:58px;right:0px;background-size: 100%;z-index: 2;" onmousedown="fpcDis();" ontouchstart="fpcDis();"></button>
+        </ul>
+    </div>
+    <div id="msgModal" class="modal fade" style="width:50%; top:20%; left:25%;">
+        <div class="modal-body" id="octreeConfirmDivH" style="background-color:rgba(145, 145, 145, 0.8)">Do you still want to build the navigation Map</div>
+        <div class="modal-footer" id="octreeConfirmDivF" style="background-color:rgba(145, 145, 145, 0.8)">
+            <button type="button" data-dismiss="modal" class="btn btn-primary" id="yesbutton">Yes</button>
+            <button type="button" data-dismiss="modal" class="btn" id="nobutton">No</button>
+        </div>
+    </div>
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog" style="width: 80%; height: .container.width;top:20%; left:10%; position:absolute;background-color:rgba(145, 145, 145, 1.0);">
+            <div id="modalContext" class="modal-body" style="border-style:none;width: 100%; height: 100%;background-repeat: no-repeat;background-size: 100%;">
+                <button type="button" class="close" data-dismiss="modal" style="top:1%; right:1%;position:absolute;">&times;</button>
+                <div id="orbitNavHelp" style="display:none">
+                    <h2 id="orbitNavTitle" style=";font-weight:bold">ORBIT NAVIGATION</h2>
+                    <div id="orbitNavContainer" class="orbitPadding">
+                        <div id="orbitNavLeftCol" style="float:left; width:33%">
+                            <div style="text-align:center;"><img id="orbitPicLeft" src="https://s3.amazonaws.com/vectorworks-cloud-static/vgx-viewer/desktop_pan_left.png" width="90" height="90" />
+                            </div>
+                            <h4 id="orbitNavInfoTitleLeft" style="font-family:DINCondensed-Bold, Arial; font-weight:bold; text-align:center">ROTATE</h4>
+                            <h4 id="orbitNavInfoBodyLeft" style="font-family:DINCondensed-Bold, Arial; font-weight:bold;text-align:center">click</h4>
+                        </div>
+                        <div id="orbitNavMidCol" style="float:left; width:33%;">
+                            <div style="text-align:center;"><img id="orbitPicMid" src="https://s3.amazonaws.com/vectorworks-cloud-static/vgx-viewer/desktop_zoom.png" width="90" height="90" />
+                            </div>
+                            <h4 id="orbitNavInfoTitleMid" style="font-family:DINCondensed-Bold, Arial; font-weight:bold;text-align:center">ZOOM</h4>
+                            <h4 id="orbitNavInfoBodyMid" style="font-family:DINCondensed-Bold, Arial; font-weight:bold;text-align:center">scroll up and down</h4>
+                        </div>
+                        <div id="orbitNavRightCol" style="float:left; width:33%;">
+                            <div style="text-align:center"><img id="orbitPicRight" src="https://s3.amazonaws.com/vectorworks-cloud-static/vgx-viewer/desktop_pan_right.png" width="90" height="90" />
+                            </div>
+                            <h4 id="orbitNavInfoTitleRight" style="font-family:DINCondensed-Bold, Arial; font-weight:bold;text-align:center">PAN</h4>
+                            <h4 id="orbitNavInfoBodyRight" style="font-family:DINCondensed-Bold, Arial; font-weight:bold;text-align:center">right-click</h4>
+                        </div>
+                    </div>
+                        <h3 id="orbitfpInfoTitle" style="font-family:DINCondensed-Bold, Arial; font-weight:bold;text-align:center">ACCESSING ORBIT MODE</h4>
+                        <h4 id="orbitfpInfoInfo1" style="font-family:DINCondensed-Bold, Arial; font-weight:bold;text-align:center"></h4>
+                        <h4 id="orbitfpInfoInfo2" style="font-family:DINCondensed-Bold, Arial; font-weight:bold;text-align:center"></h4>
+                    <div>
+
+                    </div>
+                </div>
+                <div id="firstNavHelp" class="container" style="display:none;">
+                    <div class="row">
+                        <div class="col-lg-5">
+                            <h2 id="firstTitle" style=";font-weight:bold;">FIRST-PERSON CONTROL</h2>
+                            <div class="row">
+                                <div id="firstSecondBox" style="display:none"> <img id="firstSecondPic" class="col-lg-3" src="https://s3.amazonaws.com/vectorworks-cloud-static/vgx-viewer/rotation_desktop_1person.png" width="100" height="100" />
+                                    <div id="firstTextArea2" class="col-lg-5">
+                                        <h3 id="rottitle" style="font-family:DINCondensed-Bold, Arial;font-weight:bold;">ROTATION</h4>
+                                        <h4 id="rotex" style="font-family:DINCondensed-Bold, Arial;">left click and drag</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <h3 id="firstNavInfoTitle" style="font-family:DINCondensed-Bold, Arial; font-weight:bold;text-align:left">NAVIGATING</h3>
+                            <h4 id="firstNavInfoInfo" style="font-family:DINCondensed-Bold, Arial; text-align:left; width:80%">You may use WASD or the arrow keys to move in first-person.</h4>
+                        </div>
+                        <div class="col-lg-3">
+                            <h3 id="firstStep1Title" style="font-family:DINCondensed-Bold, Arial; font-weight:bold;text-align:left">STEP 1</h3>
+                            <h4 id="firstStep1Info" style="font-family:DINCondensed-Bold, Arial; text-align:left; width:80%">Click and drag mouse cursor</h4>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <br />
+                    </div>
+                </div>
+                <div id="monoStereoHelp" class="container" style="display:none;">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <h2 id="monoStereoTitle" style=";font-weight:bold">MONO AND STEREOSCOPIC MENU</h2>
+                            <div class="row stereoRow">
+                                <div class="col-lg-2 stereoHalf"> <img class="noResize" src="https://s3.amazonaws.com/vectorworks-cloud-static/vgx-viewer/walk.png" width="30" height="30" />
+                                    <h4 id="walkText" class="noResize" style="font-weight:bold; font-family:DINCondensed-Bold, Arial;">WALK</h4>
+                                </div>
+                                <div class="col-lg-2 stereoHalf"> <img class="noResize" src="https://s3.amazonaws.com/vectorworks-cloud-static/vgx-viewer/stop.png" width="30" height="30" />
+                                    <h4 id="stopText" class="noResize" style="font-weight:bold; font-family:DINCondensed-Bold, Arial;">STOP</h4>
+                                </div>
+                            </div>
+                            <div class="row stereoRow">
+                                <div class="col-lg-2 stereoHalf"> <img class="noResize" src="https://s3.amazonaws.com/vectorworks-cloud-static/vgx-viewer/fast.png" width="30" height="30" />
+                                    <h4 id="fastText" class="noResize" style="font-weight:bold; font-family:DINCondensed-Bold, Arial;">FASTER</h4>
+                                </div>
+                                <div class="col-lg-2 stereoHalf"> <img class="noResize" src="https://s3.amazonaws.com/vectorworks-cloud-static/vgx-viewer/slow.png" width="30" height="30" />
+                                    <h4 id="slowText" class="noResize" style="font-weight:bold; font-family:DINCondensed-Bold, Arial;">SLOWER</h4>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <h4 id="monoStereoInfo" style="font-family:DINCondensed-Bold, Arial; width:80%">Look down to view the menu. Some about positioning a dot.</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <h3 id="stereoTitleHead" style="font-weight:bold;font-family:DINCondensed-Bold, Arial">STEREOSCOPIC VIEW</h3>
+                            <h4 id="stereoInfo" style="font-family:DINCondensed-Bold, Arial; width:80%" ;>Experience models in 3D immersive modes. Your mobile device must support orientation and motion sensors and inside a VR viewer</h4>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <br />
+                    </div>
+                </div>
+                <div id="helpTxt" style="border-style:none; width:100%; height:100%; text-align:center; font-size:300%; font-family:DINCondensed-Bold, Arial"></div>
+            </div>
+            <div class="modal-footer" id="mainModalFooter" style="background-color:rgba(145, 145, 145, 0.8); display:none">
+                <button type="button" data-dismiss="modal" class="btn btn-primary" id="mainYesbutton">Yes</button>
+                <button type="button" data-dismiss="modal" class="btn" id="mainNobutton">No</button>
+            </div>
+        </div>
+    </div>
+    <div id="walkSpeed" style="width: 100%;text-align:center; height: 20px;left:0px; bottom:50px; position:absolute;display:none;color:#ffffff;z-index: 2;">
+        <p id="walkSpeedText" style="font-size: 100%; font-family:DINCondensed-Bold, Arial;">Walk Speed: 10</p>
+    </div>
+    <div id="walkSpeed1" style="width: 50%;text-align:center; height: 20px;left:50%; bottom:50px; position:absolute;display:none;color:#ffffff">
+        <p id="walkSpeedText1" style="font-size: 100%; font-family:DINCondensed-Bold, Arial;">Walk Speed: 10</p>
+    </div>
+    <svg id="svg" width="100%" height="100%" version="1.1" style="position:absolute;top:0px;left:0px;display:none;z-index:2;" xmlns="http://www.w3.org/2000/svg">
+        <circle id="barInner" r="20" cx="25" cy="25" fill="transparent" stroke-dasharray="125.66" stroke-dashoffset="0"></circle>
+        <circle id="bar" r="20" cx="25" cy="25" fill="transparent" stroke-dasharray="125.66" stroke-dashoffset="0"></circle>
+    </svg><img id="mouseImg" src="https://s3.amazonaws.com/vectorworks-cloud-static/vgx-viewer/man_person_mens_room.png" style="display:none;position:absolute;" /><img id="logo" class="vectorworksLogo" src="https://s3.amazonaws.com/vectorworks-cloud-static/vgx-viewer/2016_logo.png" width="15%" height="auto" alt="2018_logo">
+    <div id="container">
+       <!-- <img id="containerImg" src='' alt='' style="z-index:2">-->
+    </div>
+
+    <script>
+    /*
+     * Debug parameters.
+     */
+    WebVRConfig = {
+      // Flag to disabled the UI in VR Mode.
+      CARDBOARD_UI_DISABLED: false, // Default: false
+
+      // Forces availability of VR mode, even for non-mobile devices.
+      FORCE_ENABLE_VR: true, // Default: false.
+
+      // Complementary filter coefficient. 0 for accelerometer, 1 for gyro.
+      K_FILTER: 0.98, // Default: 0.98.
+
+      // Flag to disable the instructions to rotate your device.
+      ROTATE_INSTRUCTIONS_DISABLED: false, // Default: false.
+
+      // How far into the future to predict during fast motion (in seconds).
+      PREDICTION_TIME_S: 0.040, // Default: 0.040.
+
+      // Flag to disable touch panner. In case you have your own touch controls.
+      TOUCH_PANNER_DISABLED: false, // Default: true.
+
+      // Enable yaw panning only, disabling roll and pitch. This can be useful
+      // for panoramas with nothing interesting above or below.
+      YAW_ONLY: false, // Default: false.
+
+      // To disable keyboard and mouse controls, if you want to use your own
+      // implementation.
+      MOUSE_KEYBOARD_CONTROLS_DISABLED: true, // Default: false.
+
+      // Prevent the polyfill from initializing immediately. Requires the app
+      // to call InitializeWebVRPolyfill() before it can be used.
+      //DEFER_INITIALIZATION: true, // Default: false.
+
+      // Enable the deprecated version of the API (navigator.getVRDevices).
+      ENABLE_DEPRECATED_API: false, // Default: false.
+
+      // Scales the recommended buffer size reported by WebVR, which can improve
+      // performance.
+      BUFFER_SCALE: 0.4, // Default: 0.5.
+
+      // Allow VRDisplay.submitFrame to change gl bindings, which is more
+      // efficient if the application code will re-bind its resources on the
+      // next frame anyway. This has been seen to cause rendering glitches with
+      // THREE.js.
+      // Dirty bindings include: gl.FRAMEBUFFER_BINDING, gl.CURRENT_PROGRAM,
+      // gl.ARRAY_BUFFER_BINDING, gl.ELEMENT_ARRAY_BUFFER_BINDING,
+      // and gl.TEXTURE_BINDING_2D for texture unit 0.
+      DIRTY_SUBMIT_FRAME_BINDINGS: false // Default: false.
+    };
+</script>
+
+<div id="myProgress" class="progressBarAttr" style="width: 100%; background-color: #ddd;">
+  <div id="myBar" style="width: 0.1%; height: 5px;background-color: #4CAF50;"></div>
+</div>
+
+<!-- templates -->
+<script id="patternVertexShader" type="x-shader/x-vertex">
+        void main() {
+            gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+        }
+</script>
+
+<script id="gradVertexShader" type="x-shader/x-vertex">
+        varying vec2 v_uv;
+        void main() {
+            v_uv = uv;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+        }
+</script>
+
+<script id="patternFragmentShader" type="x-shader/x-fragment">
+        uniform vec4 u_backgroundColor;
+        uniform vec4 u_foreColor;
+        uniform vec4 u_pattern;
+
+        const float pattern_res = 8.0;
+        const int pattern_res_int = 8;
+
+        bool is_odd(int num)
+        {
+          return ((num/2)*2 != num);
+        }
+
+        bool is_set(float pattern, int bit)
+        {
+            float bitPwr = pow(2.0,float(bit));
+            return is_odd(int(pattern / bitPwr));
+            //return mod( pattern / pow(2.0,float(bit)), 2.0) != 0.0;
+        }
+        vec4 PatternFill(vec4 pattern, vec4 foreColor, vec4 backColor) {
+            // Turn fragment coordinates into integral [0,pattern_res-1] coordinates for lookup
+            ivec2 coords = ivec2( mod(gl_FragCoord.xy, pattern_res));
+
+            // Compute linear index into flattened pattern from x,y coordinates
+            int index = coords.y * pattern_res_int + coords.x;
+
+            // The pattern is stored backwards, so invert the linear coordinate
+            index = 63 - index;
+
+            // Check if index corresponds to a foreground (!=0) or background (0) pixel
+            // Pattern is 64 bits, encoded as four 16-bit integers (stored as 32!). Get right "quarter"
+            bool value;
+
+            if (index > 47)
+              value = is_set( pattern.w, index-48 );
+            else if (index > 31)
+              value = is_set( pattern.z, index-32 );
+            else if (index > 15)
+              value = is_set( pattern.y, index-16 );
+            else
+              value = is_set( pattern.x, index    );
+
+            vec4 color = value ? foreColor : backColor;
+
+            return color;
+        }
+        void main() {
+             gl_FragColor = PatternFill(u_pattern, u_foreColor, u_backgroundColor);
+        }
+</script>
+<script id="gradientFragmentShader" type="x-shader/x-fragment">
+        uniform sampler2D u_Tex;
+        uniform vec4 u_foreColor;
+        uniform vec2 u_iaxis;
+        uniform float u_ilength;
+        uniform bool u_reverse;
+        uniform bool u_repeat;
+        uniform int u_filltype;
+
+        varying vec2 v_uv;
+
+        const float TWOPI = 6.28318531;
+        const float textureHalfPixelSize    = 1.0/256.0;    //< 1/Gradient_texture_resolution (128)
+
+        vec2 GradientBase(float distance, float radius)
+        {
+            // distance = computed parameter (varies with gradient type)
+            // radius = representative distance to which value becomes 1.0
+
+            float gradientCoeff;
+
+            if (!u_repeat)
+            {
+              gradientCoeff = distance / radius;
+              gradientCoeff = clamp(gradientCoeff, 0.0, 1.0);
+            }
+            else // Repeat
+            {
+              gradientCoeff = distance;
+              gradientCoeff /= radius;
+            }
+
+            if (u_reverse)
+              gradientCoeff = 1.0 - gradientCoeff;
+
+            // Fix gradientCoeff from [0,1] to [middleOfFirstPixel,middleOfLastPixel]
+            gradientCoeff = mix( textureHalfPixelSize, 1.0-textureHalfPixelSize, gradientCoeff );
+            return vec2(gradientCoeff, 0);
+        }
+
+
+        vec2 GradientLinear()
+        {
+            float distAlongAxis = dot(v_uv, u_iaxis);
+            return GradientBase( distAlongAxis, u_ilength );
+        }
+
+        vec2 GradientRadial()
+        {
+            float distFromOrigin = length(v_uv);
+            return GradientBase( distFromOrigin, u_ilength );
+        }
+
+        vec2 GradientRectangular()
+        {
+            float rectDistFromOrigin = max(abs(dot(v_uv,u_iaxis)),abs(dot(v_uv,vec2(-u_iaxis.y,u_iaxis.x))));
+            return GradientBase( rectDistFromOrigin, u_ilength );
+        }
+
+        vec2 GradientAngular()
+        {
+            // Need to find out correct quadrant for angle
+            vec2 ncoords = normalize(v_uv);
+
+            float cosAngle = dot(ncoords, u_iaxis);
+            float sinAngle = dot(ncoords, vec2(-u_iaxis.y,u_iaxis.x));
+
+            float angle = atan(sinAngle, cosAngle);  //< Angle in [-PI,PI]
+            angle += TWOPI;                          //< Angle in [PI, 3*PI]
+            angle = mod(angle, TWOPI);               //< Angle in [0,2*PI]
+
+            return GradientBase( angle, TWOPI );
+        }
+        void main() {
+            vec2 inUV = vec2(1.0,1.0);
+            vec4 outColor = vec4(0.0, 0.0, 0.0, 1.0);
+            if (u_filltype == 1) {
+                inUV = GradientLinear();
+                outColor.r = float(u_filltype);
+            }
+            else if (u_filltype == 2) {
+                inUV = GradientRadial();
+                outColor.g = float(u_filltype);
+            }
+            else if (u_filltype == 3) {
+                inUV = GradientRectangular();
+                outColor.b = float(u_filltype);
+            }
+            else { // angular
+                inUV = GradientAngular();
+                outColor = vec4(1.0, 1.0, 1.0, 1.0);
+            }
+
+             gl_FragColor = texture2D(u_Tex, inUV);
+             //gl_FragColor = outColor;
+             gl_FragColor.a *= u_foreColor.a;
+        }
+</script>
+<script id="postProcessVertexShader" type="x-shader/x-vertex">
+        //This is the vertex shader used for normal map generation.
+        precision highp float;
+        varying vec3 fPosition;
+        varying vec3 fNormal;
+         #include <clipping_planes_pars_vertex>
+
+        void main() {
+            vec3 transformed = vec3( position );
+
+            #ifdef USE_SKINNING
+                vec4 mvPosition = modelViewMatrix * skinned;
+            #else
+                vec4 mvPosition = modelViewMatrix * vec4( transformed, 1.0 );
+            #endif
+            gl_Position = projectionMatrix * mvPosition;
+
+            vec4 temp = modelViewMatrix * vec4(position,1.0);
+            fPosition = temp.xyz;
+            vec4 temp1 = modelViewMatrix * vec4(normal,0.0);
+            fNormal = temp1.xyz;
+
+            #include <clipping_planes_vertex>
+        }
+</script>
+<script id="postProcessFragmentShader" type="x-shader/x-fragment">
+        //This is the fragment shader used for normal map generation.
+        #include <packing>
+        precision highp float;
+        varying vec3 fPosition;
+        varying vec3 fNormal;
+        #include <clipping_planes_pars_fragment>
+        void main() {
+            #include <clipping_planes_fragment>
+            vec3 N = normalize(fNormal);
+            vec3 V = -normalize(fPosition);
+            float flip = 1.0 - step(0.0, dot(N,V));
+            N = mix(N,-N,flip);
+            float depth = packDepthToRGBA(gl_FragCoord.z).x;
+             gl_FragColor=vec4(N,0.0);
+        }
+</script>
+<!-- /templates -->
+
+<!-- scripts -->
+<script id="localize" src="strings.js"></script>
+
+<script>
+    (function () {
+
+    // configuration
+    window.Configuration = window.Configuration || {};
+
+    // setup background images
+    (function () {
+        var images = ['px.png', 'py.png', 'pz.png', 'nx.png', 'ny.png', 'nz.png'],
+            i,
+            backgroundImages = {};
+
+        var isLocal = window.location.href.indexOf("file://") != -1 || window.location.href.indexOf("http://") != -1;
+        for (i = 0; i < images.length; ++i) {
+            if (isLocal)
+                backgroundImages[images[i]] = images[i];
+            else
+                backgroundImages[images[i]] = 'https://s3.amazonaws.com/vectorworks-cloud-static/file-viewer/vgx/' + images[i];
+        }
+
+        window.Configuration.backgroundImages = backgroundImages;
+    })();
+
+    })();
+</script>
+<!-- /scripts -->
+<!-- build:js --><script type="text/javascript" src="https://s3.amazonaws.com/vectorworks-cloud-static/vgx-viewer/vendor.min.js"></script><script type="text/javascript" src="https://s3.amazonaws.com/vectorworks-cloud-static/vgx-viewer/scripts.min.js"></script>
+<script>
+    if (!Detector.webgl) {
+        Detector.addGetWebGLMessage();
+        ShowPopup(resources["#importantMessage"]);
+        throw new FatalError()
+    }
+    if (window.location.href.indexOf("file://") > -1 && checkBrowserForLocalLoading()){
+        $('#resetButtonImg').css({"display": "none"});
+        $('#DefViewType').css({"display": "none"});
+        $('#helpbtn').css({"display": "none"});
+        $('#camcontrol').css({"display": "none"});
+        $('#view360menubutton').css({"display": "none"});
+        $('#startupTutorial').css({"display": "none"});
+        $('#controlIndi').css({"display": "none"});
+        ShowPopup(resources["#previewErrorMessage"]);
+    }
+
+    setMetricSetting();
+    setWebAppStrings();
+    init();
+    animate();
+
+    function checkBrowserForLocalLoading(){
+        return /Edge/.test(navigator.userAgent) || /MSIE /.test(navigator.userAgent) || /Trident/.test(navigator.userAgent);
+    }
+</script>
+<!-- endbuild:js -->
+
+</body>
+</html>
+
